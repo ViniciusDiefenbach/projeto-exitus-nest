@@ -1,26 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { CreateLogDto } from './dto/create-log.dto';
-import { UpdateLogDto } from './dto/update-log.dto';
+import { PrismaService } from 'src/generic-services/prisma.service';
 
 @Injectable()
 export class LogService {
+  constructor(private readonly prisma: PrismaService) {}
+
   create(createLogDto: CreateLogDto) {
-    return 'This action adds a new log';
+    return this.prisma.logs.create({
+      data: createLogDto,
+    });
   }
 
   findAll() {
-    return `This action returns all log`;
+    return this.prisma.logs.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} log`;
+    return this.prisma.logs.findUnique({
+      where: {
+        id: id,
+      },
+    });
   }
 
-  update(id: number, updateLogDto: UpdateLogDto) {
-    return `This action updates a #${id} log`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} log`;
+  findByUserId(userId: number) {
+    return this.prisma.logs.findMany({
+      where: {
+        userId: userId,
+      },
+    });
   }
 }
