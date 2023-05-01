@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id                            Int          @id @default(autoincrement())
+  name                          String
+  cpf                           String       @unique @db.VarChar(11)
+  siape                         String?      @unique @db.VarChar(7)
+  dateOfBirth                   DateTime
+  email                         String       @unique
+  city                          String?
+  permissionToLeaveEarly        Boolean
+  permissionToEnterOnOtherShift Boolean
+  onSchool                      Boolean
+  shift                         String
+  qrCode                        String       @unique
+  updatedAt                     DateTime     @updatedAt
+  Logs                          Logs[]
+  leaveEarly                    EarlyExits[]
+}
+
+model Logs {
+  id        Int      @id @default(autoincrement())
+  user      Users    @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+}
+
+model EarlyExits {
+  id        Int      @id @default(autoincrement())
+  user      Users    @relation(fields: [userId], references: [id])
+  userId    Int
+  start     DateTime @default(now())
+  end       DateTime
+  createdAt DateTime @default(now())
+}
